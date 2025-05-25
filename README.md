@@ -1,10 +1,21 @@
 # Bla Repository
 
-This repository contains the source code for the Bla application.
+## Application Overview
+
+This repository contains the source code for a Python application designed to facilitate quick speech-to-text transcription. The application runs silently in the system tray (currently optimized for Windows) and allows users to record audio by simply holding down the spacebar. Once the spacebar is released, the recorded audio is sent to the OpenAI Whisper API for transcription. The resulting text is then automatically copied to the user's clipboard, making it easy to paste into any document or application.
+
+Key features include:
+*   **System Tray Integration:** Operates discreetly from the system tray, providing quick access to its functions.
+*   **Spacebar-Activated Recording:** Intuitive recording control by pressing and holding the spacebar.
+*   **OpenAI Whisper Transcription:** Leverages the powerful Whisper API for accurate speech-to-text conversion.
+*   **Automatic Clipboard Copy:** Transcribed text is immediately available for pasting.
+*   **Real-time Status Window:** A small pop-up window provides feedback on the application's status (e.g., recording, processing, copied).
+*   **Windows Autostart Option:** Includes functionality to automatically start with Windows.
+*   **Audio Feedback:** Provides distinct beeps for recording start and stop events.
 
 ## Setup
 
-To run this application, you need to set an environment variable. This variable is crucial for the application's functionality and should be kept confidential if it contains sensitive information (e.g., API keys).
+To run this application, you need to set an environment variable. This variable is crucial for the application's functionality and should be kept confidential as it contains your OpenAI API key.
 
 ### Setting the Environment Variable
 
