@@ -1,0 +1,6 @@
+sounddevice
+numpy
+scipy
+openai
+pyperclip
+keyboard
