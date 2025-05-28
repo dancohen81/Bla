@@ -1,0 +1,224 @@
+2025-05-25 19:31:02.097312: Untertitel im Auftrag des ZDF für funk, 2017
+
+2025-05-25 19:31:13.015519: Untertitel der Amara.org-Community
+
+2025-05-25 19:31:36.176767: Call the FDA and ask if that is okay.
+
+2025-05-25 19:33:07.383145: Untertitel der Amara.org-Community
+
+2025-05-25 20:25:51.640692: Also, es hat noch Backstin im Zusammenhang mit dem Speichern von Presets. Kannst du das bitte anschauen?
+
+2025-05-26 00:17:47.474068: Trotzdem ist es wichtig, dass die Datei fortgeschrittener war. Zum Beispiel haben wir schon mehr vom RAC-System implementiert.
+
+2025-05-26 00:18:13.344505: Ich will nicht, dass Sachen verloren gehen, die wir uns schon erarbeitet haben. Kannst du checken und ein ganz aktuelles Frontend generieren.
+
+2025-05-26 01:55:54.939618: Ich habe den Cache gecleaned und das hat nicht funktioniert und jetzt habe ich Jahren installiert und der läuft, der Server, aber der StrongSend hat wieder diese Meldung.
+
+2025-05-26 02:00:56.567612: Ich habe Lösung 1 genommen, ich habe das gar nicht so richtig verstanden, dass sie da drei Optionen anbietet.
+
+2025-05-26 02:01:37.201869: Das Frontend ist jetzt geladen, der Browser läuft und die App ist da. Wir können testen, was aber passiert ist. Das Design ist kaputt gegangen. Wir haben einen weißen Hintergrund und ein ganz simples Kerzchen-Design.
+
+2025-05-26 02:07:50.470906: Ich kann zum Beispiel nicht chatten. Dort gibt es eine Meldung, dass ich keine Verbindung habe. Und wenn ich die Audio-Kongressierungen machen möchte, gibt es mir auch eine HTTP-Firma, die...
+
+2025-05-26 02:11:19.092845: Ich habe hier Probleme mit der Verbindung des Browsers zum Backend. Irgendetwas klappt nicht. Ich kann weder chatten noch Audio-to-Media konvertieren.
+
+2025-05-26 02:12:59.600710: Dieses Skript läuft in einem Fens, in einer virtuellen Umgebung. Installiere nicht, bevor du nicht die Fens aktiviert hast.
+
+2025-05-26 15:12:16.233988: Untertitel der Amara.org-Community
+
+2025-05-26 15:12:32.289388: Untertitel im Auftrag des ZDF für funk, 2017
+
+2025-05-26 15:12:55.450706: Test 1, 2 aber hallo
+
+2025-05-26 15:13:22.414304: Wir testen nun das neue Whisper-Ding.
+
+2025-05-26 15:14:22.041569: Und nun sage ich dir, was ich mit dem neuen Design machen möchte.
+
+2025-05-26 21:22:54.163029: Kannst du mir bitte direkt ein Pfeil machen, das ich dann Klein einfach so geben kann? Ich mag nicht mit Klein diskutieren.
+
+2025-05-26 21:32:00.862596: Also, wir machen Designänderungen und drücken ziemlich viel nach oben oder an einen anderen Ort. Zum Beispiel links oben, die Statusangaben gehen wirklich ganz nach oben.
+
+2025-05-26 21:32:33.797472: Die Filter-Presets wandern an die leer gewordenen Stellen und dann können die Filter nach oben nachrücken.
+
+2025-05-26 21:33:15.253540: In der Titelzeile alles viel kleiner und den Untertitel braucht es nicht.
+
+2025-05-26 21:37:07.369097: Jetzt ist der Jet unter den Filtern und das ist nicht richtig. Die drei Spalten müssen immer nebeneinander sein.
+
+2025-05-26 21:38:48.422525: Gut, jetzt noch die vier Zeilen der Statusanzeige. Horizontal, zu oberst, analog.
+
+2025-05-26 21:54:13.750076: Als nächstes integrieren wir die Tabelle. Und zwar in der ersten Spalte zu oben. Es gibt ein Seil namens tabelle.py und in dem siehst du, dass da am Schluss eine Tabelle entsteht aus ungefähr 23 Seilen.
+
+2025-05-26 21:54:42.250015: Diese Tabelle gilt es nun zu integrieren.
+
+2025-05-26 21:55:45.627040: Nach jeder Führung kann man diese Tabelle manuell benutzt werden.
+
+2025-05-26 21:56:02.295235: Nach jeder Ziehung kann der Nutzer manuell die Tabelle updaten. Mach Funktionen, damit das möglich ist.
+
+2025-05-26 21:56:49.264733: Es hat irgendwo eine Funktion, die sogar die neuesten Lottozahlen aus dem Internet herunterziehen kann, findet diese Funktion.
+
+2025-05-26 21:57:35.706428: Aber wie gesagt, der Nutzer selber bestimmt, wann die Tabelle aktualisiert wird.
+
+2025-05-26 22:10:52.240264: Also, noch ein paar Sachen zur Tabelle und zum Verständnis der Tabelle.
+
+2025-05-26 22:11:15.591878: Die Tabelle darf nicht selbstständig aktualisieren. Das ist Sache des Nutzers. Er will auch die alte Tabelle anschauen und selber bestimmen können, WANN die Tabelle aktualisiert wird.
+
+2025-05-26 22:11:58.881514: Ich habe den Server getestet und er zeigt immer noch das Selbe wie vorhin.
+
+2025-05-26 22:16:59.518627: Also so wie es aussieht, macht der Hund nichts. Er schreibt nur hin, ladet Tabelle, aber es passiert lange nichts. Und wenn ich Tabelle aktualisieren klicke, kommt Zeile gleich Null.
+
+2025-05-26 22:17:46.724200: Untertitel der Amara.org-Community
+
+2025-05-26 22:18:05.769338: Also, so wie es aussieht, macht er nichts. Es heisst einfach Tabelle lädt. Und wenn ich auf Tabelle aktualisieren klicke, dann kommt Zeilen gleich Null.
+
+2025-05-26 22:19:55.591130: Nochmals zum Verständnis. Wir haben eine Datei input.csv. Dort haben wir die aktuellen Lottozahlen, die wir speichern, wenn wir eine neue Erziehung haben.
+
+2025-05-26 22:20:33.524290: Und dann haben wir output.csv und das ist ja die Datei, die schon die Tabelle enthält, die angezeigt werden sollte.
+
+2025-05-26 22:21:07.822457: Dann hat es natürlich den Mechanismus, der bei einer neuen Ziehung dann eben Input.cs voll befüllt mit einer neuen Zeile und dann wird auch ein neues Output generiert, da haben wir dann die neue Tabelle.
+
+2025-05-26 22:25:42.802809: Du musst unbedingt INPUT.CSV und die entsprechenden Funktionen benutzen, die die Tabelle gestalten. Du musst unbedingt INPUT.CSV benutzen und OUTPUT.CSV ist im Data Ordner.
+
+2025-05-26 22:29:04.993598: Yes, viel besser. Obwohl sie nicht lädt am Anfang, wenn ich auf aktualisieren klicke, kommt dann das zurück.
+
+2025-05-26 22:29:48.142981: Das ist sehr gut, aber wir müssen schauen, dass die Datei von Anfang an und eben vor einer Aktualisierung auch schon richtig geladen wird.
+
+2025-05-26 22:30:07.934640: Es kann nicht sein, dass wir aktualisieren müssen, um die Tabelle angezeigt zu bekommen.
+
+2025-05-26 22:36:33.386653: Also, zu oberst hat es ein Frame und in dem ist die Tabelle. Kann man das Frame auf- und zuklappbar machen. Und das zweite ist, wir haben viel Platz, lass uns 5 Knöpfe machen. Und zwar 5 Knöpfe mit dem Datum der letzten 5 Ziehhungen.
+
+2025-05-26 22:37:10.457755: Der Witz daran ist natürlich, dass wenn der entsprechende Knopf gedrückt wird, dass die entsprechende Datum...
+
+2025-05-26 22:37:29.312472: Wenn der Nutzer dann einen Knopf drückt, soll dann nicht die aktuelle Tabelle angezeigt werden, sondern die Tabelle, wie sie an diesem Zeitpunkt aussah.
+
+2025-05-26 22:37:57.618791: Die letzten fünf Daten ergeben sich
+
+2025-05-26 22:38:11.976381: Das Datum ergibt sich aus den letzten fünf Einträgen in der Input.csv im Dataordner.
+
+2025-05-26 22:43:57.196973: Die Knöpfe sind gut, das Mechanische funktioniert, aber natürlich muss die Tabelle jedes Mal für jedes Datum neu berechnet werden. Einfach mit diesem Startpunkt.
+
+2025-05-26 22:44:28.801906: Die Knöpfe sollen dann nicht nur eine Zielhaut zeigen, sondern die Tabelle, wie sie so aussieht mit dem letzten Eintrag des Knopfdatums.
+
+2025-05-26 22:45:02.819078: Untertitel der Amara.org-Community
+
+2025-05-26 22:45:32.180746: Wenn einer dieser Knöpfe gedrückt wird, mit einem nicht aktuellen Datum, muss natürlich auch der Skript die Tabelle erstellen. Das heisst, er muss einfach den letzten oder so viele Einträge wie nötig ignorieren und von dem gewünschten Datum an dann die Tabelle zeichnen.
+
+2025-05-26 22:48:07.304668: Na gut, einen Knopf braucht es nicht, und zwar den ersten mit Datum. Der ist ja, das ist dasselbe wie aktuelle Zählung.
+
+2025-05-26 22:49:33.677210: Das zweite ist ein kleiner Bug. Wenn die Webseite fertig geraten ist, heißt es Tabelle aktualisiert. Hoffentlich nicht. Das soll nicht automatisch ausgelöst werden. Aber das wird noch angezeigt.
+
+2025-05-26 23:11:54.059599: Das Cool kann mit dem Code in der Partei Gewinn.co.uk nennen, kann ins Internet und kann die neuesten Lottozahlen nennen. Jetzt ist es aber wichtig, dass nicht nur Tier 1 und die Zusatzzahlen genommen werden, sondern auch Tier 2. Das muss dann auch alles ins Input.co geschrieben werden. Schaut das bitte mal an.
+
+2025-05-26 23:18:21.064490: Wenn ich mich recht erinnere, macht Zusammenfassung einfach nach der Auswertung von Gewinni neue Daten, die schon gespeichert werden müssen. Aber das hat nichts mit Output.csv zu tun. Output.csv ist nur dazu da, um die Tabelle... Das ist die Tabelle.
+
+2025-05-26 23:40:35.913441: Die zweite Ziehung wird noch nicht gefunden, vielleicht ist der Fetch nicht genug lang, das ist eher unten auf der Webseite.
+
+2025-05-26 23:46:34.192944: Also, wir haben hier vielleicht ein Problem.
+
+2025-05-26 23:46:48.936417: Meine Angabe ist, dass die Webseite, also...
+
+2025-05-26 23:47:13.349153: Meine Annahme ist, dass die Webseite Gewinne braucht, aber vielleicht stimmt das gar nicht. Überprüft das doch mal. Vielleicht hat die Webseite mittlerweile selber eine Funktion, die auf Euromillions die Daten holen geht.
+
+2025-05-26 23:47:41.930747: Dann hätten wir den Boot an der falschen Stelle angepasst.
+
+2025-05-26 23:53:46.475847: Entferne bitte im obersten Kreis den schickelten Abella und den grünen Strich.
+
+2025-05-26 23:59:06.465719: Also, das war nicht ganz gut, ich habe alles wieder hergestellt. Du musst nur die Titel in den Frames entfernen und unter den Titeln hat er seinen fetten grünen Strich. Den brauchst du auch nicht mehr. Aber lass mir alle schönen anderen grünen Sachen.
+
+2025-05-27 00:00:26.559720: Und im oberen Frame hat es noch auch einen kleinen Titel, aktuelle Lotterzahlung, den kannst du auch entstehnen und den dazugehörigen Strich bitte auch.
+
+2025-05-27 00:07:54.766050: Im oberen Frame hat es noch einen Titel, aktuelle Lotto-Zahlen dazu folgt. Kannst du mir den entfernen und den dazugehörigen grünen Strich darunter.
+
+2025-05-27 00:12:50.542151: Jetzt haben wir doch noch ein paar Funktionen des Partikelsystems, sodass ich die Eigenschaften davon verwenden kann.
+
+2025-05-27 00:17:57.035067: Wir ziehen um. Das Design stimmt nicht ganz. Wir nehmen den Inhalt vom obersten Frame, das sind die Tabelle, die Knöpfe, und platzieren das im linken, im ersten, also im linken Frame.
+
+2025-05-27 00:18:43.191498: Das oberste Kreis kann dann gelöscht werden, alles rückt nach oben.
+
+2025-05-27 00:19:09.549163: Wir platzieren die Tabelle oberhalb der Presets. Dann kommen die Statusanzeige und dann zuunterst kommen die Presets.
+
+2025-05-27 00:36:54.694002: Wie groß darf denn so ein Drone sein? Ah, natürlich hängt das damit zusammen, wie viele Volcans ein Modell hat.
+
+2025-05-27 00:38:13.450913: Man kann einen Spektrum wohl nicht allzu gross machen, denke ich. Sonst würde man nachher...
+
+2025-05-27 00:38:58.449187: Nachher hätte man halt hohe Kosten bzw. das Gehirn wäre dann gefüllt mit Anweisungen. Ich weiß, was man da macht. Man würde Spezialisten für die Ausgaben, die anfallen, machen.
+
+2025-05-27 00:40:02.601288: In Ableton könnte es dann so aussehen, dass ich einen Rolling-Base-Spezialisten hätte und dann aber auch noch einen Arrangement-Spezialist und vielleicht noch einen Ground-Base-Spezialisten.
+
+2025-05-27 00:44:27.381169: Ich werde das versuchen, machen zu lassen. Und zwar von klein in Visual Studio. Aber wie du mir helfen könntest, wäre ein super Prompt zu machen, oder ein Dokument. Ein Dokument zu machen und ein Prompt für klein, damit ich das so entwickeln kann.
+
+2025-05-27 00:45:31.464444: Im Dokument kannst du festhalten, was wir oben besprochen haben und das so aufbereiten, dass der Agent in klein dann es einfach hat, diese Struktur zu entwickeln.
+
+2025-05-27 01:18:20.208601: Entschuldigung, mein Bein.
+
+2025-05-27 01:18:29.128551: Entschuldigung, wenn meine letzte Aussage...
+
+2025-05-27 01:18:52.786711: Entschuldige, wenn meine letzten Aussagen verwirrend waren. Natürlich kannst du Sachen ändern. Einfach nicht alles über den Haufen schmeissen. Ich will es nicht in der Form noch benutzen. Wir sollen das weiterentwickeln. Aber ich wollte nicht, dass du von null an beginnst.
+
+2025-05-27 02:08:07.178084: Schau mal die Werbemeldung an, Hörnchen, die meine App macht. Kannst du mir da helfen? Zum Beispiel steht zu unterst Dummy. Das wäre keine Dummy-Action, das wäre eine richtige Action.
+
+2025-05-27 21:23:47.188132: Also, mein Command im Visual Studio hat nicht funktioniert. Jetzt habe ich einen neuen Command geöffnet. Defense aktiviert. Und jetzt haben wir eine neue Serie melden.
+
+2025-05-27 21:38:52.533086: Also, wir müssen was Intelligenter angehen. Wir könnten uns Gedanken machen über Modi. Zuerst ist der Song leer. Der Modi, der jetzt herrscht, standardmässig, ist mal einfach etwas kreieren, nicht ein Song ablaufen.
+
+2025-05-27 21:40:05.154176: Also, und dann könnten wir je nach Modus schauen, dass nur bestimmte Agenten involviert sind. Wenn ich jetzt anfange und einen Song aus dem Nichts erschaffe, brauche ich natürlich jemand, der mir Melodien schreibt. Die müssen noch nicht arrangiert sein, die müssen nicht herumgeschoben werden. Einfach mal Clips füllen.
+
+2025-05-27 21:41:02.902298: Ein Agent, der hilft, einen Songstarter zu stellen, die ersten Spuren zu passen, Spuren mit Instrumenten zu überlegen, wobei das natürlich auch nicht der gleiche Agent sein muss, aber das wäre im Modus, sagen wir Songstarter, wäre am Anfang klar, was passieren muss.
+
+2025-05-27 21:42:34.033068: Meine Gedanken dazu sind halt noch nicht so ausgereicht. Aber es gibt andere Programme, die das gut integrieren. Zum Beispiel gibt es die Codeagenten, die haben einen D-Bank-Modus, einen Code-Modus, einen Orchestrator-Modus. Ja, und das könnte auch den Ableton, wäre das vielleicht wichtig, wenn der Nutzer einen Modus bestimmen kann, damit die Agenten ein bisschen wissen, um was es geht und nicht alles selber erraten müssen.
+
+2025-05-27 21:47:29.555878: Ansonsten klingt das doch sehr gut. Und natürlich muss zum Beispiel der Orchestrator muss natürlich auch einen Kontext haben, von Chat zu Chat. Nicht nur den Kontext über den Modi, den er sich drin befindet, sondern natürlich muss man sich mit ihm auch ganz normal im Chat verhalten können. Ja, das ist ein magnuskiger Moment.
+
+2025-05-27 22:02:53.004956: Also, wir brauchen unbedingt am Anfang so etwas wie ein In-Desk-Projekt. Das ist, der Agent, der Orchestrator, muss als erstes mal die Session abrufen und schauen, was ist im Song, arbeiten wir an einem Projekt, das schon besteht, ob es etwas Neues ist, ob etwas angelegt werden.
+
+2025-05-27 22:04:00.256596: Ich glaube, dann haben wir auch wenige Fähne, die wir probieren.
+
+2025-05-27 22:17:03.784241: Beim Start muss eine Routine vorhanden sein, die schaut, ob ein Projektpfeil im Projektverzeichnis ist.
+
+2025-05-27 22:18:55.249379: So wie ich das verstehe, muss ziemlich früh schon ein File geschrieben werden. In dieses File kommen dann Informationen, die aus den Session-Infos gewonnen wurden, wie Anzahl Tracks und solche Sachen. Vielleicht ist das wichtig, wenn man nachher die Tasks an die Unteragenten verteilt.
+
+2025-05-27 22:19:29.317873: Vielleicht muss man bei jedem Projektstart ein temporäres Init-File machen oder ein temporäres Projekt-File, was dann später einem wirklichen Projekt zugeordnet werden kann.
+
+2025-05-27 22:19:53.614388: Deine Implementation mit SafeZone braucht es wahrscheinlich auch, aber ich denke, man muss da einfach am Anfang einen Ablauf machen, damit das Projekt sauber initiiert wird.
+
+2025-05-27 22:21:47.544255: Sehr gut, das machen wir so. Aber ich habe eine Demo-Version, wo ich enabled bin, wo ich die Files nie speichere. Das muss natürlich auch mit einem ungespeicherten File funktionieren.
+
+2025-05-27 22:26:19.163514: Wieso habe ich jetzt mit dem Rolling Base Spezialisten zu tun?
+
+2025-05-27 22:27:39.443682: Und die Frage betreffend der Tempo-Änderung ist ziemlich struktiv.
+
+2025-05-27 22:38:54.187848: Ich habe ein Problem und zwar habe ich eine sehr unsaubere Projektstruktur. Ich habe in unserem Workspace ein Ordner und in diesem Ordner ist das Projekt. Aber im Root ist ein anderes Projekt.
+
+2025-05-27 22:39:34.666235: Ich will nun den Ableton-AI-Controller säubern, damit ich ein Git machen kann. Weil das andere Projekt hat auch schon ein Git. Also das funktioniert nicht. Zwei Gits in verschachtelter Weise.
+
+2025-05-27 22:40:02.282481: Ich will am Schluss einen Workspace, wo wir direkt im Projektorten sind.
+
+2025-05-27 22:40:29.175033: Das ist doch üblich so. Zeig mir doch, wie wir dahin kommen.
+
+2025-05-27 22:41:16.780705: Ich weiss nicht, ob Ableton, ARIN Controller noch Abhängigkeiten hat, außer halt sein soll. Das müssen wir sehr gut benutzen.
+
+2025-05-28 01:56:04.360870: Ich glaube, wir müssen diesem KI-Agenten noch ganz genau beibringen, was ich meinen könnte, wenn ich sowas sage, und was dann die Routine wäre, einen Krieg zu erstellen.
+
+2025-05-28 01:56:37.579360: Zudem müssen wir eine gute Balance finden zwischen dem KI-Agenten, der einfach mal etwas macht, auch wenn es nicht ganz richtig ist, ohne Nachfrage, oder jemand, der alles genau planen und wissen muss. Wir müssen etwas dazwischen finden.
+
+2025-05-28 01:57:21.770472: Ich glaube, wir müssen den Agenten noch viel besser erklären, was gemeint sein könnte, wenn ich sowas sage. Und dann muss er natürlich auch präzise Schritte haben und wissen, wie 90% der Bässe aussehen und gesetzt sind.
+
+2025-05-28 02:06:11.001875: Was ich getestet habe, hat sehr gut funktioniert. Das, was wir uns hier erarbeitet haben, ist sehr wichtig. Alle KI-Agenten müssen ein ähnliches Feeling dafür bekommen, was sie machen können und was nicht.
+
+2025-05-28 02:06:51.662539: Wir müssen das irgendwie unbedingt festhalten in einem Dokument, weil wir das noch nicht vollständig implementiert haben und das uns aber nicht durch die Lappen gehen darf. Bitte mach ein Dokument, wo wir zusammenfassen, wie wichtig das ist, dass diese Agenten sehr gut gebrieft werden. Wir fassen zusammen, wie wir jetzt dieses Problem gelöst haben.
+
+2025-05-28 02:10:04.082460: Sehr gut. Vielen Dank für das Dokument. Unten siehst du einen neuen Fall, den wir noch anschauen müssen. Die Agenten müssen natürlich den Kontext mit überliefert bekommen, damit sie wissen, wovon ich spreche, sonst gibt es Missverständnisse.
+
+2025-05-28 02:10:27.112330: Und das scheint mir hier nicht der Fall zu sein. Kannst du das bitte sehr genau anschauen?
+
+2025-05-28 02:33:42.267096: Einer dieser Agenten sollte ja wirklich die Übersicht haben und das Ganze an die richtigen Orte delegieren. Aber vielleicht hat er einfach noch zu wenig Ahnung vom Geschäft.
+
+2025-05-28 02:34:24.397785: Vielleicht braucht es im Allgemeinen noch viel mehr Beschreibungen, wie bestimmte Dinge passieren, gewisse Arbeitsabläufe, gewisse Konzepte beim Erstellen von Musik.
+
+2025-05-28 02:35:28.203776: Schlussendlich sollten die Agenten nicht nur verstehen, wie sie Dinge machen und manipulieren können, sondern auch wieso und eigentlich sollten alle das grosse Ganze immer im Hinterkopf haben.
+
+2025-05-28 02:36:36.120633: Mir ist klar, dass du jetzt nicht alles hier ausfüllen kannst, was es noch braucht, da ja auch du Ableton nicht auswendig kennst, aber vielleicht sollten wir uns auch einen Ansatz überlegen, dass das System noch lernen kann, dass gewisse Dinge dann automatisch in das Rack gehen, wenn sie funktioniert haben, gewisse Abläufe, die sich bewährt haben, Dinge, die dann nicht verloren gehen, weil sie persistiert wurden.
+
+2025-05-28 02:38:04.183183: Was meinst du, müssen die Agenten noch viel mehr lernen über COI, oder besser gesagt, müssen sie gewisse Dinge dann im Betrieb sich selber in den Systemfront schreiben, oder eben in einen Weg? Das wäre doch toll.
+
+2025-05-28 02:45:04.360647: Im Moment benutzen wir, glaube ich, Gemini 1.5. Wenn wir ein denkendes Modell benutzen, erzielen wir dann da mehr Output, z.B. auch nach Gedanken der Agenten. Das würde uns vielleicht da noch helfen, das noch besser zu schützen.
+

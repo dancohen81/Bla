@@ -1,3 +1,4 @@
+import datetime
 import sys
 import os
 import numpy as np
@@ -14,6 +15,24 @@ SAMPLERATE = 16000
 FILENAME = "aufnahme.wav"
 
 ICON_PATH = os.path.join(os.path.dirname(__file__), "mic_icon.png")  # irgendein kleines Icon
+
+import winshell
+import os
+from win32com.client import Dispatch
+
+def add_to_autostart(script_path, name="SprachTool"):
+    startup = winshell.startup()
+    shortcut_path = os.path.join(startup, f"{name}.lnk")
+    shell = Dispatch('WScript.Shell')
+    shortcut = shell.CreateShortCut(shortcut_path)
+    shortcut.TargetPath = script_path  # z. B. r"C:\Users\DU\Pfad\tray_sprachtool.pyw"
+    shortcut.WorkingDirectory = os.path.dirname(script_path)
+    shortcut.IconLocation = script_path  # Oder Icon separat setzen
+    shortcut.save()
+
+
+
+
 
 # Autostart-Link (Windows)
 def setup_autostart():
@@ -37,7 +56,11 @@ class StatusWindow(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("🎤 Sprachaufnahme")
-        self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint | QtCore.Qt.Tool)
+        self.setWindowFlags(
+            QtCore.Qt.WindowStaysOnTopHint |
+            QtCore.Qt.Tool |
+            QtCore.Qt.WindowMinimizeButtonHint
+        )
         self.setGeometry(100, 100, 320, 90)
 
         self.setStyleSheet("""
@@ -73,7 +96,9 @@ class StatusWindow(QtWidgets.QWidget):
 
 class TrayRecorder(QtWidgets.QSystemTrayIcon):
     def __init__(self, app):
-        super().__init__(QtGui.QIcon(ICON_PATH if os.path.exists(ICON_PATH) else QtGui.QIcon()))
+        self.icon_idle = QtGui.QIcon("mic_idle.png")
+        self.icon_active = QtGui.QIcon("mic_active.png")
+        super().__init__(self.icon_idle)
         self.setToolTip("Sprachaufnahme bereit")
 
         self.menu = QtWidgets.QMenu()
@@ -113,6 +138,8 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
                 self.stop_recording()
 
     def start_recording(self):
+        self.setIcon(self.icon_active)
+
         try:
             self.recording_data = []
             self.stream = sd.InputStream(samplerate=SAMPLERATE, channels=1, dtype='int16', callback=self.audio_callback)
@@ -124,6 +151,8 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
             self.window.set_status(f"❌ Fehler: {e}")
 
     def stop_recording(self):
+        self.setIcon(self.icon_idle)
+
         try:
             self.stream.stop()
             self.stream.close()
@@ -156,6 +185,9 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
                     language="de"
                 )
             text = result.strip()
+            with open("transkript_log.txt", "a", encoding="utf-8") as logf:
+                logf.write(f"{datetime.datetime.now()}: {text}\n\n")
+
             pyperclip.copy(text)
             self.window.set_status(f"✅ Kopiert:\n{text[:60]}{'...' if len(text) > 60 else ''}")
         except Exception as e:
@@ -172,4 +204,6 @@ def run_app():
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
-    run_app()
+    add_to_autostart(os.path.abspath(__file__))  # Nur beim ersten Start!
+    run_app() # Changed from main() to run_app()
+
