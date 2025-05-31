@@ -8,6 +8,7 @@ import pyperclip
 import openai
 import winsound
 import shutil
+import threading # Added for background processing
 from PyQt5 import QtWidgets, QtGui, QtCore
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -16,19 +17,6 @@ FILENAME = "aufnahme.wav"
 
 ICON_PATH = os.path.join(os.path.dirname(__file__), "mic_icon.png")  # irgendein kleines Icon
 
-import winshell
-import os
-from win32com.client import Dispatch
-
-def add_to_autostart(script_path, name="SprachTool"):
-    startup = winshell.startup()
-    shortcut_path = os.path.join(startup, f"{name}.lnk")
-    shell = Dispatch('WScript.Shell')
-    shortcut = shell.CreateShortCut(shortcut_path)
-    shortcut.TargetPath = script_path  # z. B. r"C:\Users\DU\Pfad\tray_sprachtool.pyw"
-    shortcut.WorkingDirectory = os.path.dirname(script_path)
-    shortcut.IconLocation = script_path  # Oder Icon separat setzen
-    shortcut.save()
 
 
 
@@ -83,6 +71,7 @@ class StatusWindow(QtWidgets.QWidget):
         self.space_pressed = False
         self.grabKeyboard()
 
+    @QtCore.pyqtSlot(str) # Mark as slot for thread-safe updates
     def set_status(self, text):
         self.label.setText(text)
 
@@ -146,9 +135,9 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
             self.stream.start()
             self.is_recording = True
             winsound.Beep(1000, 120)
-            self.window.set_status("🎙️ Aufnahme läuft...")
+            QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, "🎙️ Aufnahme läuft..."))
         except Exception as e:
-            self.window.set_status(f"❌ Fehler: {e}")
+            QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, f"❌ Fehler: {e}"))
 
     def stop_recording(self):
         self.setIcon(self.icon_idle)
@@ -159,10 +148,12 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
             self.is_recording = False
             winsound.Beep(800, 100)
             winsound.Beep(600, 100)
-            self.window.set_status("🔁 Verarbeite...")
-            self.process_audio()
+            QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, "🔁 Verarbeite..."))
+            # Start processing in a new thread
+            processing_thread = threading.Thread(target=self.process_audio)
+            processing_thread.start()
         except Exception as e:
-            self.window.set_status(f"❌ Fehler: {e}")
+            QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, f"❌ Fehler: {e}"))
 
     def audio_callback(self, indata, frames, time, status):
         if status:
@@ -171,7 +162,7 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
 
     def process_audio(self):
         if not self.recording_data:
-            self.window.set_status("⚠️ Keine Daten aufgenommen.")
+            QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, "⚠️ Keine Daten aufgenommen."))
             return
         audio_data = np.concatenate(self.recording_data, axis=0)
         wavfile.write(FILENAME, SAMPLERATE, audio_data)
@@ -189,9 +180,9 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
                 logf.write(f"{datetime.datetime.now()}: {text}\n\n")
 
             pyperclip.copy(text)
-            self.window.set_status(f"✅ Kopiert:\n{text[:60]}{'...' if len(text) > 60 else ''}")
+            QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, f"✅ Kopiert:\n{text[:60]}{'...' if len(text) > 60 else ''}"))
         except Exception as e:
-            self.window.set_status(f"❌ Transkriptionsfehler: {e}")
+            QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, f"❌ Transkriptionsfehler: {e}"))
         finally:
             if os.path.exists(FILENAME):
                 os.remove(FILENAME)
@@ -204,6 +195,4 @@ def run_app():
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
-    add_to_autostart(os.path.abspath(__file__))  # Nur beim ersten Start!
-    run_app() # Changed from main() to run_app()
-
+    run_app()
