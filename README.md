@@ -10,48 +10,38 @@ Key features include:
 *   **OpenAI Whisper Transcription:** Leverages the powerful Whisper API for accurate speech-to-text conversion.
 *   **Automatic Clipboard Copy:** Transcribed text is immediately available for pasting.
 *   **Real-time Status Window:** A small pop-up window provides feedback on the application's status (e.g., recording, processing, copied).
+*   **Dynamic Firefly Background:** The status window now features a subtle, animated background with pulsating fireflies that change color based on the application's state (orange for idle, red for recording, green for processing/success).
 *   **Windows Autostart Option:** Includes functionality to automatically start with Windows.
 *   **Audio Feedback:** Provides distinct beeps for recording start and stop events.
 
 ## Setup
 
-To run this application, you need to set an environment variable. This variable is crucial for the application's functionality and should be kept confidential as it contains your OpenAI API key.
+To run this application, you need to provide your OpenAI API key. This application uses a `.env` file to securely load your API key as an environment variable.
 
-### Setting the Environment Variable
+### 1. Create a `.env` file
 
-Please set the `MY_API_KEY` environment variable with your respective API key.
+Create a file named `.env` in the root directory of the project (where `tray_sprachtool.py` is located). Add your OpenAI API key to this file in the following format:
 
-#### Windows
+```
+OPENAI_API_KEY="your_openai_api_key_here"
+```
+Replace `"your_openai_api_key_here"` with your actual OpenAI API key.
 
-You can set the environment variable temporarily in your command prompt:
+### 2. Install Dependencies
+
+This project uses `python-dotenv` to load environment variables and other Python libraries. You can install them using pip:
 
 ```bash
-set MY_API_KEY=your_api_key_here
+pip install python-dotenv sounddevice numpy scipy openai pyperclip PyQt5
 ```
-
-To set it permanently, you can use the System Properties dialog or the `setx` command:
-
-```bash
-setx MY_API_KEY "your_api_key_here"
-```
-
-#### Linux/macOS
-
-You can set the environment variable temporarily in your terminal:
-
-```bash
-export MY_API_KEY="your_api_key_here"
-```
-
-To set it permanently, add the `export` line to your shell's configuration file (e.g., `~/.bashrc`, `~/.zshrc`, or `~/.profile`):
-
-```bash
-echo 'export MY_API_KEY="your_api_key_here"' >> ~/.bashrc
-source ~/.bashrc
-```
-
-Replace `your_api_key_here` with your actual API key.
+It's recommended to use a virtual environment for dependency management.
 
 ## Usage
 
-[Further usage instructions can be added here later.]
+To start the application, simply run the Python script:
+
+```bash
+python tray_sprachtool.py
+```
+
+The application will appear in your system tray. Press and hold the spacebar to record, and release to transcribe. The status window will show the current state and the fireflies will change color accordingly.
