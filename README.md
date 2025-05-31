@@ -29,16 +29,37 @@ Replace `"your_openai_api_key_here"` with your actual OpenAI API key.
 
 ### 2. Install Dependencies
 
-This project uses `python-dotenv` to load environment variables and other Python libraries. You can install them using pip:
+It is highly recommended to use a virtual environment to manage project dependencies.
+
+#### Using `venv` (Standard Python module)
 
 ```bash
-pip install python-dotenv sounddevice numpy scipy openai pyperclip PyQt5
+# Create a virtual environment
+python -m venv .venv
+
+# Activate the virtual environment
+# On Windows:
+.venv\Scripts\activate
+# On macOS/Linux:
+source .venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
 ```
-It's recommended to use a virtual environment for dependency management.
+
+#### Using `uv` (Fast Python package installer and resolver)
+
+If you have `uv` installed (you can install it via `pip install uv`), you can manage your virtual environment and dependencies more quickly:
+
+```bash
+# Create a virtual environment and install dependencies
+uv venv
+uv pip install -r requirements.txt
+```
 
 ## Usage
 
-To start the application, simply run the Python script:
+To start the application, simply run the Python script after activating your virtual environment:
 
 ```bash
 python tray_sprachtool.py
