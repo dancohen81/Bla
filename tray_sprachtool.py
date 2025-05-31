@@ -11,6 +11,7 @@ import shutil
 import threading # Added for background processing
 from PyQt5 import QtWidgets, QtGui, QtCore
 import dotenv # Added for .env file loading
+from pynput import keyboard # Added for global hotkey listening
 
 dotenv.load_dotenv() # Load environment variables from .env file
 
@@ -194,6 +195,12 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
         super().__init__(self.icon_idle)
         self.setToolTip("Sprachaufnahme bereit")
 
+        self.clipboard_history = ["", ""] # Stores the last two clipboard contents
+
+        # Start global hotkey listener in a separate thread
+        self.hotkey_listener_thread = threading.Thread(target=self._start_hotkey_listener, daemon=True)
+        self.hotkey_listener_thread.start()
+
         self.menu = QtWidgets.QMenu()
         self.menu.addAction("Fenster anzeigen", self.show_window)
         self.menu.addAction("Autostart aktivieren", setup_autostart)
@@ -213,6 +220,54 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.check_keys)
         self.timer.start(50)
+
+    def _start_hotkey_listener(self):
+        # Define the hotkey combination (Ctrl + Shift + V)
+        # On Windows, 'ctrl' is typically 'ctrl_l' or 'ctrl_r', 'shift' is 'shift_l' or 'shift_r'
+        # We'll use a generic check for 'ctrl' and 'shift'
+        COMBINATIONS = [
+            {keyboard.Key.ctrl_l, keyboard.Key.shift_l, keyboard.KeyCode.from_char('v')},
+            {keyboard.Key.ctrl_r, keyboard.Key.shift_r, keyboard.KeyCode.from_char('v')},
+            {keyboard.Key.ctrl_l, keyboard.Key.shift_r, keyboard.KeyCode.from_char('v')},
+            {keyboard.Key.ctrl_r, keyboard.Key.shift_l, keyboard.KeyCode.from_char('v')},
+        ]
+
+        current_keys = set()
+
+        def on_press(key):
+            try:
+                current_keys.add(key)
+                for combination in COMBINATIONS:
+                    if all(k in current_keys for k in combination):
+                        # Hotkey detected, trigger the action
+                        QtCore.QMetaObject.invokeMethod(self, "_paste_previous_clipboard", QtCore.Qt.QueuedConnection)
+                        break # Only trigger once per press
+            except AttributeError:
+                pass # Special keys like Key.space, Key.esc etc. have no .char attribute
+
+        def on_release(key):
+            try:
+                if key in current_keys:
+                    current_keys.remove(key)
+            except KeyError:
+                pass # Key not in set, ignore
+
+        with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
+            listener.join()
+
+    def _paste_previous_clipboard(self):
+        if len(self.clipboard_history) > 1 and self.clipboard_history[-2]:
+            text_to_paste = self.clipboard_history[-2]
+            pyperclip.copy(text_to_paste)
+            QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, f"📋 Zweitletztes kopiert:\n{text_to_paste[:60]}{'...' if len(text_to_paste) > 60 else ''}"))
+            
+            # Simulate Ctrl+V to paste the content
+            keyboard.Controller().press(keyboard.Key.ctrl_l)
+            keyboard.Controller().press(keyboard.KeyCode.from_char('v'))
+            keyboard.Controller().release(keyboard.KeyCode.from_char('v'))
+            keyboard.Controller().release(keyboard.Key.ctrl_l)
+        else:
+            QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, "⚠️ Keine frühere Zwischenablage verfügbar."))
 
     def icon_clicked(self, reason):
         if reason == self.Trigger:
@@ -288,6 +343,11 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
             with open("transkript_log.txt", "a", encoding="utf-8") as logf:
                 logf.write(f"{datetime.datetime.now()}: {text}\n\n")
 
+            # Update clipboard history
+            self.clipboard_history.append(text)
+            if len(self.clipboard_history) > 2: # Keep only the last two items
+                self.clipboard_history = self.clipboard_history[-2:]
+            
             pyperclip.copy(text)
             QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, f"✅ Kopiert:\n{text[:60]}{'...' if len(text) > 60 else ''}"))
             # Green pulse and fade back to orange
