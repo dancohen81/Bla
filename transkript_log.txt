@@ -222,3 +222,7 @@
 
 2025-05-28 02:45:04.360647: Im Moment benutzen wir, glaube ich, Gemini 1.5. Wenn wir ein denkendes Modell benutzen, erzielen wir dann da mehr Output, z.B. auch nach Gedanken der Agenten. Das würde uns vielleicht da noch helfen, das noch besser zu schützen.
 
+2025-05-31 22:11:59.308965: Untertitel der Amara.org-Community
+
+2025-05-31 22:12:01.992799: Untertitel der Amara.org-Community
+
