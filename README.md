@@ -8,7 +8,8 @@ Key features include:
 *   **System Tray Integration:** Operates discreetly from the system tray, providing quick access to its functions.
 *   **Spacebar-Activated Recording:** Intuitive recording control by pressing and holding the spacebar.
 *   **OpenAI Whisper Transcription:** Leverages the powerful Whisper API for accurate speech-to-text conversion.
-*   **Automatic Clipboard Copy:** Transcribed text is immediately available for pasting.
+*   **Automatic Clipboard Copy:** Transcribed text is immediately available for pasting to the primary clipboard.
+*   **Secondary Clipboard (Ctrl+Shift+V):** Transcribed text is also copied to a secondary clipboard, accessible via `Ctrl+Shift+V` for quick access to the previous transcription.
 *   **Real-time Status Window:** A small pop-up window provides feedback on the application's status (e.g., recording, processing, copied).
 *   **Dynamic Firefly Background:** The status window now features a subtle, animated background with pulsating fireflies that change color based on the application's state (orange for idle, red for recording, green for processing/success).
 *   **Windows Autostart Option:** Includes functionality to automatically start with Windows.
@@ -65,4 +66,4 @@ To start the application, simply run the Python script after activating your vir
 python tray_sprachtool.py
 ```
 
-The application will appear in your system tray. Press and hold the spacebar to record, and release to transcribe. The status window will show the current state and the fireflies will change color accordingly.
+The application will appear in your system tray. Press and hold the spacebar to record, and release to transcribe. The status window will show the current state and the fireflies will change color accordingly. The transcribed text will be copied to your primary clipboard and also to a secondary clipboard accessible via `Ctrl+Shift+V`.
