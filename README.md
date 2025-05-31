@@ -6,7 +6,7 @@ This repository contains the source code for a Python application designed to fa
 
 Key features include:
 *   **System Tray Integration:** Operates discreetly from the system tray, providing quick access to its functions.
-*   **Spacebar-Activated Recording:** Intuitive recording control by pressing and holding the spacebar.
+*   **F3/F4 Recording Control:** Press and hold F3 to record. Release F3 to stop recording and process. Press F4 to cancel the current recording.
 *   **OpenAI Whisper Transcription:** Leverages the powerful Whisper API for accurate speech-to-text conversion.
 *   **Automatic Clipboard Copy:** Transcribed text is immediately available for pasting to the primary clipboard.
 *   **Secondary Clipboard (Ctrl+Shift+V):** Transcribed text is also copied to a secondary clipboard, accessible via `Ctrl+Shift+V` for quick access to the previous transcription.
@@ -66,4 +66,4 @@ To start the application, simply run the Python script after activating your vir
 python tray_sprachtool.py
 ```
 
-The application will appear in your system tray. Press and hold the spacebar to record, and release to transcribe. The status window will show the current state and the fireflies will change color accordingly. The transcribed text will be copied to your primary clipboard and also to a secondary clipboard accessible via `Ctrl+Shift+V`.
+The application will appear in your system tray. Press and hold F3 to record; release F3 to stop and process the audio. If you need to cancel a recording, press F4. The status window will show the current state and the fireflies will change color accordingly. The transcribed text will be copied to your primary clipboard and also to a secondary clipboard accessible via `Ctrl+Shift+V`.

@@ -100,20 +100,14 @@ class StatusWindow(QtWidgets.QWidget):
         layout.addWidget(self.label)
         self.setLayout(layout)
 
-        self.space_pressed = False
-        self.grabKeyboard()
 
     @QtCore.pyqtSlot(str) # Mark as slot for thread-safe updates
     def set_status(self, text):
         self.label.setText(text)
 
-    def keyPressEvent(self, event):
-        if event.key() == QtCore.Qt.Key_Space:
-            self.space_pressed = True
-
-    def keyReleaseEvent(self, event):
-        if event.key() == QtCore.Qt.Key_Space:
-            self.space_pressed = False
+    @QtCore.pyqtSlot()
+    def _activate_window(self):
+        self.activateWindow()
 
     @QtCore.pyqtSlot(QtGui.QColor)
     def set_firefly_color(self, color):
@@ -217,9 +211,6 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
         self.stream = None
 
         self.activated.connect(self.icon_clicked)
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.check_keys)
-        self.timer.start(50)
 
     def _start_hotkey_listener(self):
         # Define the hotkey combination (Ctrl + Shift + V)
@@ -237,6 +228,13 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
         def on_press(key):
             try:
                 current_keys.add(key)
+                # Check for F3 to start recording
+                if key == keyboard.Key.f3 and not self.is_recording:
+                    QtCore.QMetaObject.invokeMethod(self, "start_recording", QtCore.Qt.QueuedConnection)
+                # Check for F4 to cancel recording
+                elif key == keyboard.Key.f4 and self.is_recording:
+                    QtCore.QMetaObject.invokeMethod(self, "cancel_recording", QtCore.Qt.QueuedConnection)
+
                 for combination in COMBINATIONS:
                     if all(k in current_keys for k in combination):
                         # Hotkey detected, trigger the action
@@ -247,6 +245,8 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
 
         def on_release(key):
             try:
+                if key == keyboard.Key.f3 and self.is_recording:
+                    QtCore.QMetaObject.invokeMethod(self, "stop_recording", QtCore.Qt.QueuedConnection)
                 if key in current_keys:
                     current_keys.remove(key)
             except KeyError:
@@ -278,14 +278,8 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
         self.window.raise_()
         self.window.activateWindow()
 
-    def check_keys(self):
-        if self.window.space_pressed:
-            if not self.is_recording:
-                self.start_recording()
-        else:
-            if self.is_recording:
-                self.stop_recording()
-
+    @QtCore.pyqtSlot()
+    @QtCore.pyqtSlot()
     def start_recording(self):
         self.setIcon(self.icon_active)
         QtCore.QMetaObject.invokeMethod(self.window, "set_firefly_color", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(QtGui.QColor, QtGui.QColor(255, 0, 0))) # Red for recording
@@ -301,6 +295,25 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
             QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, f"❌ Fehler: {e}"))
             QtCore.QMetaObject.invokeMethod(self.window, "set_firefly_color", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(QtGui.QColor, QtGui.QColor(255, 165, 0))) # Back to orange on error
 
+    @QtCore.pyqtSlot()
+    @QtCore.pyqtSlot()
+    def cancel_recording(self):
+        if self.is_recording:
+            try:
+                self.stream.stop()
+                self.stream.close()
+                self.is_recording = False
+                self.recording_data = [] # Discard recorded data
+                winsound.Beep(400, 100) # Different beep for cancellation
+                winsound.Beep(300, 100)
+                QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, "🚫 Aufnahme abgebrochen."))
+                QtCore.QMetaObject.invokeMethod(self.window, "set_firefly_color", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(QtGui.QColor, QtGui.QColor(255, 165, 0))) # Back to orange
+            except Exception as e:
+                QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, f"❌ Fehler beim Abbrechen: {e}"))
+                QtCore.QMetaObject.invokeMethod(self.window, "set_firefly_color", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(QtGui.QColor, QtGui.QColor(255, 165, 0))) # Back to orange on error
+        self.setIcon(self.icon_idle)
+
+    @QtCore.pyqtSlot()
     def stop_recording(self):
         self.setIcon(self.icon_idle)
         QtCore.QMetaObject.invokeMethod(self.window, "set_firefly_color", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(QtGui.QColor, QtGui.QColor(0, 255, 0))) # Green for processing
@@ -350,11 +363,15 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
             
             pyperclip.copy(text)
             QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, f"✅ Kopiert:\n{text[:60]}{'...' if len(text) > 60 else ''}"))
+            QtCore.QMetaObject.invokeMethod(self.window, "showNormal", QtCore.Qt.QueuedConnection) # Restore if minimized
+            QtCore.QMetaObject.invokeMethod(self.window, "raise", QtCore.Qt.QueuedConnection) # Bring to front
+            QtCore.QMetaObject.invokeMethod(self.window, "_activate_window", QtCore.Qt.QueuedConnection) # Activate window
             # Green pulse and fade back to orange
             QtCore.QMetaObject.invokeMethod(self.window, "set_firefly_color", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(QtGui.QColor, QtGui.QColor(0, 255, 0))) # Ensure green pulse
             QtCore.QMetaObject.invokeMethod(self.window, "set_firefly_color", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(QtGui.QColor, QtGui.QColor(255, 165, 0))) # Fade back to orange
         except Exception as e:
-            QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, f"❌ Transkriptionsfehler: {e}"))
+            error_message = f"❌ Transkriptionsfehler: {str(e)}" # Explicitly convert e to string
+            QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, error_message))
             QtCore.QMetaObject.invokeMethod(self.window, "set_firefly_color", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(QtGui.QColor, QtGui.QColor(255, 165, 0))) # Back to orange on error
         finally:
             if os.path.exists(FILENAME):
