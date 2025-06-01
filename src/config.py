@@ -7,6 +7,7 @@ from win32com.client import Dispatch
 SAMPLERATE = 16000
 FILENAME = "aufnahme.wav"
 AUDIO_OUTPUT_FILENAME = "elevenlabs_output.mp3" # For Eleven Labs audio output
+MIN_RECORDING_DURATION_SECONDS = 1 # Minimum duration for a recording to be processed by Whisper
 
 ICON_PATH = os.path.join(os.path.dirname(__file__), "..", "mic_icon.png") # Adjusted path
 

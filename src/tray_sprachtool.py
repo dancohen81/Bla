@@ -14,7 +14,7 @@ from pynput import keyboard
 
 from .elevenlabs_window import ElevenLabsInputWindow
 from .status_window import StatusWindow
-from .config import SAMPLERATE, FILENAME, ICON_PATH, setup_autostart
+from .config import SAMPLERATE, FILENAME, ICON_PATH, MIN_RECORDING_DURATION_SECONDS, setup_autostart
 
 dotenv.load_dotenv()
 
@@ -255,7 +255,18 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
         if not self.recording_data:
             QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, "⚠️ Keine Daten aufgenommen."))
             return
+        
         audio_data = np.concatenate(self.recording_data, axis=0)
+        
+        # Calculate duration of the recording
+        duration = len(audio_data) / SAMPLERATE
+
+        if duration < MIN_RECORDING_DURATION_SECONDS:
+            QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, f"⚠️ Aufnahme zu kurz ({duration:.1f}s). Mindestens {MIN_RECORDING_DURATION_SECONDS}s benötigt."))
+            QtCore.QMetaObject.invokeMethod(self.window, "set_firefly_color", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(QtGui.QColor, QtGui.QColor(255, 165, 0))) # Back to orange
+            self.recording_data = [] # Clear data for next recording
+            return
+
         wavfile.write(FILENAME, SAMPLERATE, audio_data)
 
         try:
