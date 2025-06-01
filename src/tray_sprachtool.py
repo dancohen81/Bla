@@ -1,6 +1,13 @@
-import datetime
+# Add the parent directory of src to sys.path to allow absolute imports
+# when running tray_sprachtool.py directly from the src directory.
 import sys
 import os
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.abspath(os.path.join(current_dir, os.pardir))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+import datetime
 import numpy as np
 import sounddevice as sd
 import scipy.io.wavfile as wavfile
@@ -12,9 +19,9 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 import dotenv
 from pynput import keyboard
 
-from .elevenlabs_window import ElevenLabsInputWindow
-from .status_window import StatusWindow
-from .config import SAMPLERATE, FILENAME, ICON_PATH, MIN_RECORDING_DURATION_SECONDS, setup_autostart
+from src.elevenlabs_window import ElevenLabsInputWindow
+from src.status_window import StatusWindow
+from src.config import SAMPLERATE, FILENAME, ICON_PATH, MIN_RECORDING_DURATION_SECONDS, setup_autostart
 
 dotenv.load_dotenv()
 
@@ -303,13 +310,6 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
                 os.remove(FILENAME)
 
 def run_app():
-    # Add the parent directory of src to sys.path to allow absolute imports
-    # when running tray_sprachtool.py directly from the src directory.
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    project_root = os.path.abspath(os.path.join(current_dir, os.pardir))
-    if project_root not in sys.path:
-        sys.path.insert(0, project_root)
-
     app = QtWidgets.QApplication(sys.argv)
     app.setQuitOnLastWindowClosed(False)
     recorder = TrayRecorder(app)

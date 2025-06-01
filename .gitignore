@@ -1,5 +1,5 @@
 .venv/
 venv/
 .env
-# Other existing .gitignore content if any, but based on the initial file list, it's likely empty or minimal.
-# Assuming it's empty or I should just add these.
+__pycache__/
+transkript_log.txt
