@@ -9,6 +9,7 @@ import openai
 import winsound
 import shutil
 import threading # Added for background processing
+import requests # Added for Eleven Labs API calls
 from PyQt5 import QtWidgets, QtGui, QtCore
 import dotenv # Added for .env file loading
 from pynput import keyboard # Added for global hotkey listening
@@ -16,8 +17,15 @@ from pynput import keyboard # Added for global hotkey listening
 dotenv.load_dotenv() # Load environment variables from .env file
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
+ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
+ELEVENLABS_VOICE_ID = os.getenv("ELEVENLABS_VOICE_ID", "ZthjuvLPty3kTMaNKVKb") # Default voice ID if not set
+# You can find available voice IDs in your Eleven Labs account settings or API documentation.
+# For example, a common voice ID for English is "21m00Tzpb8CXL8y4KuD4" or "EXAVITQu4vr4xnSDxMaL"
+# For multilingual models, you might need to use a specific voice ID that supports it.
+
 SAMPLERATE = 16000
 FILENAME = "aufnahme.wav"
+AUDIO_OUTPUT_FILENAME = "elevenlabs_output.mp3" # For Eleven Labs audio output
 
 ICON_PATH = os.path.join(os.path.dirname(__file__), "mic_icon.png")  # irgendein kleines Icon
 
@@ -43,6 +51,154 @@ def setup_autostart():
             shortcut.save()
         except Exception as e:
             print(f"Autostart konnte nicht gesetzt werden: {e}")
+
+class ElevenLabsInputWindow(QtWidgets.QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Eleven Labs Text-to-Speech")
+        self.setGeometry(200, 200, 400, 250)
+
+        layout = QtWidgets.QVBoxLayout()
+
+        self.text_input = QtWidgets.QTextEdit(self)
+        self.text_input.setPlaceholderText("Geben Sie hier den Text für Eleven Labs ein...")
+        layout.addWidget(self.text_input)
+
+        self.speak_button = QtWidgets.QPushButton("Text vorlesen lassen", self)
+        self.speak_button.setStyleSheet("""
+            QPushButton {
+                background-color: #2196F3; /* Blue */
+                border: none;
+                color: white;
+                padding: 10px 20px;
+                text-align: center;
+                text-decoration: none;
+                font-size: 10pt;
+                margin: 4px 2px;
+                border-radius: 5px;
+            }
+            QPushButton:hover {
+                background-color: #0b7dda;
+            }
+        """)
+        layout.addWidget(self.speak_button)
+
+        self.status_label = QtWidgets.QTextEdit(self)
+        self.status_label.setReadOnly(True)
+        self.status_label.setText("Bereit")
+        self.status_label.setAlignment(QtCore.Qt.AlignCenter)
+        self.status_label.setStyleSheet("""
+            QTextEdit {
+                color: #555;
+                font-size: 9pt;
+                background-color: #f0f0f0; /* Light gray background */
+                border: 1px solid #ccc;
+                border-radius: 3px;
+                padding: 5px;
+            }
+        """)
+        self.status_label.setFixedHeight(50) # Give it some height
+        layout.addWidget(self.status_label)
+
+        self.setLayout(layout)
+
+        self.speak_button.clicked.connect(self.send_text_to_eleven_labs)
+
+    @QtCore.pyqtSlot(str)
+    def set_status(self, text):
+        self.status_label.setText(text)
+        self.status_label.verticalScrollBar().setValue(self.status_label.verticalScrollBar().minimum()) # Scroll to top
+
+    def send_text_to_eleven_labs(self):
+        text = self.text_input.toPlainText().strip()
+        if not text:
+            self.set_status("Bitte geben Sie Text ein.")
+            return
+
+        if not ELEVENLABS_API_KEY:
+            self.set_status("Eleven Labs API Key nicht gefunden. Bitte in .env setzen.")
+            return
+
+        self.set_status("Sende Text an Eleven Labs...")
+        QtCore.QMetaObject.invokeMethod(self.speak_button, "setEnabled", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(bool, False))
+
+        # Run API call in a separate thread to keep UI responsive
+        threading.Thread(target=self._call_eleven_labs_api, args=(text,)).start()
+
+    def _call_eleven_labs_api(self, text):
+        url = f"https://api.elevenlabs.io/v1/text-to-speech/{ELEVENLABS_VOICE_ID}"
+        headers = {
+            "Accept": "audio/mpeg",
+            "Content-Type": "application/json",
+            "xi-api-key": ELEVENLABS_API_KEY
+        }
+        data = {
+            "text": text,
+            "model_id": "eleven_multilingual_v2", # Or "eleven_monolingual_v1" for English only
+            "voice_settings": {
+                "stability": 0.5,
+                "similarity_boost": 0.75
+            }
+        }
+
+        try:
+            response = requests.post(url, headers=headers, json=data, stream=True)
+            response.raise_for_status() # Raise an exception for HTTP errors
+
+            audio_data = b""
+            for chunk in response.iter_content(chunk_size=1024):
+                audio_data += chunk
+
+            # Save the audio to a temporary file
+            with open(AUDIO_OUTPUT_FILENAME, "wb") as f:
+                f.write(audio_data)
+
+            QtCore.QMetaObject.invokeMethod(self, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, "Spiele Audio ab..."))
+            self._play_audio_file(AUDIO_OUTPUT_FILENAME)
+            QtCore.QMetaObject.invokeMethod(self, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, "Wiedergabe abgeschlossen."))
+
+        except requests.exceptions.RequestException as e:
+            QtCore.QMetaObject.invokeMethod(self, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, f"Fehler bei Eleven Labs API: {e}"))
+        except Exception as e:
+            QtCore.QMetaObject.invokeMethod(self, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, f"Ein unerwarteter Fehler ist aufgetreten: {e}"))
+        finally:
+            QtCore.QMetaObject.invokeMethod(self.speak_button, "setEnabled", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(bool, True))
+            if os.path.exists(AUDIO_OUTPUT_FILENAME):
+                os.remove(AUDIO_OUTPUT_FILENAME)
+
+    def _play_audio_file(self, file_path):
+        try:
+            import shutil
+            from pydub import AudioSegment
+            from pydub.playback import play
+
+            # Check if ffmpeg is available
+            if not shutil.which("ffmpeg") and not shutil.which("ffprobe"):
+                error_msg = "Fehler: FFmpeg/FFprobe nicht im PATH gefunden. Bitte installieren Sie FFmpeg und fügen Sie es Ihrem System-PATH hinzu."
+                print(error_msg) # For console debugging
+                QtCore.QMetaObject.invokeMethod(self, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, error_msg))
+                return
+
+            # Load the audio file (pydub can handle mp3)
+            audio = AudioSegment.from_file(file_path)
+
+            # Convert audio to a NumPy array for sounddevice
+            # Ensure the audio is in a format sounddevice can play (e.g., 16-bit PCM)
+            audio = audio.set_frame_rate(SAMPLERATE).set_channels(1).set_sample_width(2) # 16-bit PCM
+            audio_array = np.array(audio.get_array_of_samples())
+
+            # Play the audio using sounddevice
+            sd.play(audio_array, SAMPLERATE)
+            sd.wait() # Wait until playback is finished
+
+        except ImportError:
+            error_msg = "Fehler: pydub nicht installiert. Bitte 'pip install pydub' ausführen."
+            print(error_msg) # For console debugging
+            QtCore.QMetaObject.invokeMethod(self, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, error_msg))
+        except Exception as e:
+            error_msg = f"Fehler beim Abspielen der Audiodatei: {e}"
+            print(error_msg) # For console debugging
+            QtCore.QMetaObject.invokeMethod(self, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, error_msg))
 
 class StatusWindow(QtWidgets.QWidget):
     def __init__(self):
@@ -96,8 +252,28 @@ class StatusWindow(QtWidgets.QWidget):
             }
         """)
 
+        self.eleven_labs_button = QtWidgets.QPushButton("Eleven Labs TTS", self)
+        self.eleven_labs_button.setStyleSheet("""
+            QPushButton {
+                background-color: #4CAF50; /* Green */
+                border: none;
+                color: white;
+                padding: 8px 16px;
+                text-align: center;
+                text-decoration: none;
+                font-size: 9pt;
+                margin: 4px 2px;
+                border-radius: 5px;
+            }
+            QPushButton:hover {
+                background-color: #45a049;
+            }
+        """)
+        # The connection will be made from TrayRecorder as it manages the new window
+
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(self.label)
+        layout.addWidget(self.eleven_labs_button) # Add the new button
         self.setLayout(layout)
 
 
@@ -211,6 +387,10 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
         self.stream = None
 
         self.activated.connect(self.icon_clicked)
+        
+        # Connect the Eleven Labs button
+        self.eleven_labs_input_window = ElevenLabsInputWindow()
+        self.window.eleven_labs_button.clicked.connect(self.open_eleven_labs_window)
 
     def _start_hotkey_listener(self):
         # Define the hotkey combination (Ctrl + Shift + V)
@@ -277,6 +457,11 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
         self.window.show()
         self.window.raise_()
         self.window.activateWindow()
+
+    def open_eleven_labs_window(self):
+        self.eleven_labs_input_window.show()
+        self.eleven_labs_input_window.raise_()
+        self.eleven_labs_input_window.activateWindow()
 
     @QtCore.pyqtSlot()
     @QtCore.pyqtSlot()

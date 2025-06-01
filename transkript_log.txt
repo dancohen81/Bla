@@ -1,0 +1,6 @@
+2025-06-01 03:09:15.933922: Wenn ich einen Knopf mache und selber starte diesen Klicken, dann habe ich in der Max-Konsole keinen Fehler mehr.
+
+2025-06-01 13:38:26.116239: Untertitel der Amara.org-Community
+
+2025-06-01 13:39:04.858701: Ich will Bla um eine Funktion erweitern. Auf dem kleinen Interface soll es einen Knopf bekommen, den ich klicken kann. Dann öffnet sich ein neues Fenster, wo ich Text einfügen kann und abschicken kann. Und der wird mir dann von 11labs vorgelesen.
+
