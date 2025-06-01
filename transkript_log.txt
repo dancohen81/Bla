@@ -4,3 +4,11 @@
 
 2025-06-01 13:39:04.858701: Ich will Bla um eine Funktion erweitern. Auf dem kleinen Interface soll es einen Knopf bekommen, den ich klicken kann. Dann öffnet sich ein neues Fenster, wo ich Text einfügen kann und abschicken kann. Und der wird mir dann von 11labs vorgelesen.
 
+2025-06-01 14:25:45.229571: Mach mir doch ein Dokument, das wir deinem Kai-Bruder geben können, damit er diesen Task, der wunderbar gelaufen ist, dann weiterführen kann. Und das andere ist, ich teste ja TTS im Moment und da könntest du mir ein kleines, ja wie ein Hörspiel machen, mit den Sachen drin, die wir beide erlebt haben. Und das Hörspiel sollte auch etwas informativ sein, damit ich dann immer gewandter werde in Max Fordot.
+
+2025-06-01 17:32:39.487322: Untertitel der Amara.org-Community
+
+2025-06-01 17:34:55.288491: Untertitel im Auftrag des ZDF für funk, 2017
+
+2025-06-01 18:03:30.819299: Das Drehtuch wird langsam größer, müssen wir schon refaktorieren. Und ich möchte, dass du alle nötigen Dateien in einen Source-Order kopierst.
+

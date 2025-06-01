@@ -6,7 +6,7 @@ echo Virtuelle Umgebung wird aktiviert...
 call venv\Scripts\activate.bat
 
 echo Notwendige Bibliotheken werden installiert...
-pip install -r requirements.txt
+uv pip install -r src/requirements.txt
 
 rem Spezialfall für PyAudio auf Windows:
 rem Falls 'pip install pyaudio' fehlschlägt, könntest du versuchen, ein Wheel zu installieren.
@@ -18,5 +18,5 @@ rem pip install PyAudio-0.2.11-cp310-cp310-win_amd64.whl
 
 echo Installation abgeschlossen.
 echo Um die Umgebung zu aktivieren, tippe: call venv\Scripts\activate.bat
-echo Um das Skript zu starten, tippe: python voice_command.py
+echo Um das Skript zu starten, tippe: python -m src.tray_sprachtool
 pause

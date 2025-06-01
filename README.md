@@ -14,6 +14,8 @@ Key features include:
 *   **Dynamic Firefly Background:** The status window now features a subtle, animated background with pulsating fireflies that change color based on the application's state (orange for idle, red for recording, green for processing/success).
 *   **Windows Autostart Option:** Includes functionality to automatically start with Windows.
 *   **Audio Feedback:** Provides distinct beeps for recording start and stop events.
+*   **GUI Control:** A clickable button in the GUI to start and stop recordings.
+*   **Text-to-Speech (TTS) Window:** A dedicated window for Text-to-Speech functionality, allowing playback to be paused and resumed.
 
 ## Setup
 
@@ -21,7 +23,7 @@ To run this application, you need to provide your OpenAI API key. This applicati
 
 ### 1. Create a `.env` file
 
-Create a file named `.env` in the root directory of the project (where `tray_sprachtool.py` is located). Add your OpenAI API key to this file in the following format:
+Create a file named `.env` in the root directory of the project. Add your OpenAI API key to this file in the following format:
 
 ```
 OPENAI_API_KEY="your_openai_api_key_here"
@@ -45,7 +47,7 @@ python -m venv .venv
 source .venv/bin/activate
 
 # Install dependencies
-pip install -r requirements.txt
+pip install -r src/requirements.txt
 ```
 
 #### Using `uv` (Fast Python package installer and resolver)
@@ -55,15 +57,15 @@ If you have `uv` installed (you can install it via `pip install uv`), you can ma
 ```bash
 # Create a virtual environment and install dependencies
 uv venv
-uv pip install -r requirements.txt
+uv pip install -r src/requirements.txt
 ```
 
 ## Usage
 
-To start the application, simply run the Python script after activating your virtual environment:
+To start the application, simply run the Python module after activating your virtual environment from the project root directory:
 
 ```bash
-python tray_sprachtool.py
+python -m src.tray_sprachtool
 ```
 
 The application will appear in your system tray. Press and hold F3 to record; release F3 to stop and process the audio. If you need to cancel a recording, press F4. The status window will show the current state and the fireflies will change color accordingly. The transcribed text will be copied to your primary clipboard and also to a secondary clipboard accessible via `Ctrl+Shift+V`.
