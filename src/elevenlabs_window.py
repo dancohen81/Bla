@@ -192,7 +192,6 @@ class ElevenLabsInputWindow(QtWidgets.QWidget):
             response = requests.get(url, headers=headers)
             response.raise_for_status()
             voices_data = response.json()
-            print(f"Fetched voices data: {voices_data}") # Debug print
             
             # Use QMetaObject.invokeMethod to update UI from the worker thread
             QtCore.QMetaObject.invokeMethod(self, "update_voice_dropdown",
@@ -222,7 +221,6 @@ class ElevenLabsInputWindow(QtWidgets.QWidget):
             name = voice.get("name")
             voice_id = voice.get("voice_id")
             if name and voice_id:
-                print(f"Adding voice: {name} (ID: {voice_id})") # Debug print
                 display_text = f"{name} (ID: {voice_id})"
                 self.voice_dropdown.addItem(display_text, voice_id)
                 self.voices[voice_id] = name # Store for easy lookup
@@ -342,7 +340,6 @@ class ElevenLabsInputWindow(QtWidgets.QWidget):
 
             if not shutil.which("ffmpeg") and not shutil.which("ffprobe"):
                 error_msg = "Fehler: FFmpeg/FFprobe nicht im PATH gefunden. Bitte installieren Sie FFmpeg und fügen Sie es Ihrem System-PATH hinzu."
-                print(error_msg)
                 QtCore.QMetaObject.invokeMethod(self, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, error_msg))
                 return
 
@@ -361,18 +358,16 @@ class ElevenLabsInputWindow(QtWidgets.QWidget):
 
         except ImportError:
             error_msg = "Fehler: pydub nicht installiert. Bitte 'pip install pydub' ausführen."
-            print(error_msg)
             QtCore.QMetaObject.invokeMethod(self, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, error_msg))
         except Exception as e:
             error_msg = f"Fehler beim Abspielen der Audiodatei: {e}"
-            print(error_msg)
             QtCore.QMetaObject.invokeMethod(self, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, error_msg))
             QtCore.QMetaObject.invokeMethod(self.stop_button, "setEnabled", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(bool, False))
             QtCore.QMetaObject.invokeMethod(self.resume_button, "setEnabled", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(bool, False))
 
     def _playback_callback(self, outdata, frames, time, status):
         if status:
-            print(status)
+            pass # Removed print(status)
         chunk_size = frames
         remaining_data = len(self.audio_data_to_play) - self.playback_position
         if remaining_data >= chunk_size:

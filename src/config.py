@@ -27,4 +27,4 @@ def setup_autostart():
             shortcut.IconLocation = ICON_PATH
             shortcut.save()
         except Exception as e:
-            print(f"Autostart konnte nicht gesetzt werden: {e}")
+            pass # Removed print statement

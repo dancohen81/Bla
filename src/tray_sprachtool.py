@@ -80,14 +80,11 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
         def on_press(key):
             try:
                 current_keys.add(key)
-                print(f"Hotkey Listener: Key pressed: {key}, is_recording: {self.is_recording}")
                 # Check for F3 to start recording
                 if key == keyboard.Key.f3 and not self.is_recording:
-                    print("Hotkey Listener: F3 pressed, starting recording...")
                     QtCore.QMetaObject.invokeMethod(self, "start_recording", QtCore.Qt.QueuedConnection)
                 # Check for F4 to cancel recording
                 elif key == keyboard.Key.f4 and self.is_recording:
-                    print("Hotkey Listener: F4 pressed, cancelling recording...")
                     QtCore.QMetaObject.invokeMethod(self, "cancel_recording", QtCore.Qt.QueuedConnection)
 
                 for combination in COMBINATIONS:
@@ -100,9 +97,7 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
 
         def on_release(key):
             try:
-                print(f"Hotkey Listener: Key released: {key}, is_recording: {self.is_recording}")
                 if key == keyboard.Key.f3 and self.is_recording:
-                    print("Hotkey Listener: F3 released, stopping recording...")
                     QtCore.QMetaObject.invokeMethod(self, "stop_recording", QtCore.Qt.QueuedConnection)
                 if key in current_keys:
                     current_keys.remove(key)
@@ -149,7 +144,6 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
 
     @QtCore.pyqtSlot()
     def start_recording(self):
-        print(f"start_recording called. Current is_recording: {self.is_recording}")
         self.setIcon(self.icon_active)
         QtCore.QMetaObject.invokeMethod(self.window, "set_firefly_color", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(QtGui.QColor, QtGui.QColor(255, 0, 0))) # Red for recording
         
@@ -173,11 +167,9 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
             self.stream = sd.InputStream(samplerate=SAMPLERATE, channels=1, dtype='int16', callback=self.audio_callback)
             self.stream.start()
             self.is_recording = True
-            print(f"start_recording: is_recording set to True. Stream started.")
             winsound.Beep(1000, 120)
             QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, "🎙️ Aufnahme läuft..."))
         except Exception as e:
-            print(f"start_recording: Error: {e}")
             QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, f"❌ Fehler: {e}"))
             QtCore.QMetaObject.invokeMethod(self.window, "set_firefly_color", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(QtGui.QColor, QtGui.QColor(255, 165, 0))) # Back to orange on error
             
@@ -228,7 +220,6 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
 
     @QtCore.pyqtSlot()
     def stop_recording(self):
-        print(f"stop_recording called. Current is_recording: {self.is_recording}")
         self.setIcon(self.icon_idle)
         QtCore.QMetaObject.invokeMethod(self.window, "set_firefly_color", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(QtGui.QColor, QtGui.QColor(0, 255, 0))) # Green for processing
         
@@ -250,7 +241,6 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
             self.stream.stop()
             self.stream.close()
             self.is_recording = False
-            print(f"stop_recording: is_recording set to False. Stream stopped.")
             winsound.Beep(800, 100)
             winsound.Beep(600, 100)
             QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, "🔁 Verarbeite..."))
@@ -258,13 +248,12 @@ class TrayRecorder(QtWidgets.QSystemTrayIcon):
             processing_thread = threading.Thread(target=self.process_audio)
             processing_thread.start()
         except Exception as e:
-            print(f"stop_recording: Error: {e}")
             QtCore.QMetaObject.invokeMethod(self.window, "set_status", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(str, f"❌ Fehler: {e}"))
             QtCore.QMetaObject.invokeMethod(self.window, "set_firefly_color", QtCore.Qt.QueuedConnection, QtCore.Q_ARG(QtGui.QColor, QtGui.QColor(255, 165, 0))) # Back to orange on error
 
     def audio_callback(self, indata, frames, time, status):
         if status:
-            print(status)
+            pass # Removed print(status)
         self.recording_data.append(indata.copy())
 
     def process_audio(self):
