@@ -5,24 +5,29 @@ import requests
 import threading
 from PyQt5 import QtWidgets, QtGui, QtCore
 import dotenv
+from . import settings # Import the new settings module using relative import
 
 dotenv.load_dotenv()
 
 ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
-ELEVENLABS_VOICE_ID = os.getenv("ELEVENLABS_VOICE_ID", "ZthjuvLPty3kTMaNKVKb")
+# Load voice ID from settings, then .env, then default
+ELEVENLABS_VOICE_ID = settings.get_setting("elevenlabs_voice_id", os.getenv("ELEVENLABS_VOICE_ID", "ZthjuvLPty3kTMaNKVKb"))
 SAMPLERATE = 16000
 
 class ElevenLabsInputWindow(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Eleven Labs Text-to-Speech")
-        self.setGeometry(200, 200, 400, 250)
+        self.setGeometry(200, 200, 450, 400) # Increased window size
         self.setStyleSheet("""
             QWidget {
                 background-color: #222222; /* Dark background */
                 color: #ffffff; /* White text */
             }
         """)
+        # Attempt to make title bar dark - often OS controlled, but this might help with some themes
+        self.setWindowFlags(self.windowFlags() | QtCore.Qt.WindowStaysOnTopHint) # Keep on top for better visibility
+        self.setAttribute(QtCore.Qt.WA_TranslucentBackground) # Might help with title bar styling on some systems
 
         layout = QtWidgets.QVBoxLayout()
 
@@ -37,6 +42,7 @@ class ElevenLabsInputWindow(QtWidgets.QWidget):
                 padding: 5px;
             }
         """)
+        self.text_input.setMinimumHeight(150) # Make text field larger
         layout.addWidget(self.text_input)
 
         self.speak_button = QtWidgets.QPushButton("Text vorlesen lassen", self)
@@ -45,11 +51,11 @@ class ElevenLabsInputWindow(QtWidgets.QWidget):
                 background-color: transparent;
                 border: 1px solid #ff9800; /* Orange border */
                 color: white;
-                padding: 10px 20px;
+                padding: 5px 10px; /* Smaller padding */
                 text-align: center;
                 text-decoration: none;
-                font-size: 10pt;
-                margin: 4px 2px;
+                font-size: 8pt; /* Smaller font size */
+                margin: 2px 1px; /* Smaller margin */
                 border-radius: 5px;
             }
             QPushButton:hover {
@@ -58,18 +64,20 @@ class ElevenLabsInputWindow(QtWidgets.QWidget):
         """)
         layout.addWidget(self.speak_button)
 
-        # Add Stop and Resume buttons
+        # Create a horizontal layout for Stop and Resume buttons
+        stop_resume_layout = QtWidgets.QHBoxLayout()
+
         self.stop_button = QtWidgets.QPushButton("Wiedergabe stoppen", self)
         self.stop_button.setStyleSheet("""
             QPushButton {
                 background-color: transparent;
                 border: 1px solid #ff9800; /* Orange border */
                 color: white;
-                padding: 8px 16px;
+                padding: 5px 10px; /* Smaller padding */
                 text-align: center;
                 text-decoration: none;
-                font-size: 9pt;
-                margin: 4px 2px;
+                font-size: 8pt; /* Smaller font size */
+                margin: 2px 1px; /* Smaller margin */
                 border-radius: 5px;
             }
             QPushButton:hover {
@@ -77,7 +85,7 @@ class ElevenLabsInputWindow(QtWidgets.QWidget):
             }
         """)
         self.stop_button.setEnabled(False) # Disabled initially
-        layout.addWidget(self.stop_button)
+        stop_resume_layout.addWidget(self.stop_button)
 
         self.resume_button = QtWidgets.QPushButton("Wiedergabe fortsetzen", self)
         self.resume_button.setStyleSheet("""
@@ -85,11 +93,11 @@ class ElevenLabsInputWindow(QtWidgets.QWidget):
                 background-color: transparent;
                 border: 1px solid #ff9800; /* Orange border */
                 color: white;
-                padding: 8px 16px;
+                padding: 5px 10px; /* Smaller padding */
                 text-align: center;
                 text-decoration: none;
-                font-size: 9pt;
-                margin: 4px 2px;
+                font-size: 8pt; /* Smaller font size */
+                margin: 2px 1px; /* Smaller margin */
                 border-radius: 5px;
             }
             QPushButton:hover {
@@ -97,7 +105,37 @@ class ElevenLabsInputWindow(QtWidgets.QWidget):
             }
         """)
         self.resume_button.setEnabled(False) # Disabled initially
-        layout.addWidget(self.resume_button)
+        stop_resume_layout.addWidget(self.resume_button)
+        
+        layout.addLayout(stop_resume_layout) # Add the horizontal layout to the main vertical layout
+
+        # Add a voice selection dropdown
+        self.voice_label = QtWidgets.QLabel("Stimme auswählen:")
+        self.voice_label.setStyleSheet("color: #ffffff; font-size: 10pt;")
+        layout.addWidget(self.voice_label)
+
+        self.voice_dropdown = QtWidgets.QComboBox(self)
+        self.voice_dropdown.setStyleSheet("""
+            QComboBox {
+                background-color: #333333;
+                color: #ffffff;
+                border: 1px solid #555555;
+                border-radius: 5px;
+                padding: 5px;
+            }
+            QComboBox::drop-down {
+                /* Removed custom styling for dropdown to ensure default behavior */
+            }
+            QComboBox::down-arrow {
+                /* Removed custom styling for dropdown arrow to ensure default behavior */
+            }
+            QComboBox QAbstractItemView {
+                background-color: #333333;
+                color: #ffffff;
+                selection-background-color: #ff9800;
+            }
+        """)
+        layout.addWidget(self.voice_dropdown)
 
         self.status_label = QtWidgets.QTextEdit(self)
         self.status_label.setReadOnly(True)
@@ -121,11 +159,97 @@ class ElevenLabsInputWindow(QtWidgets.QWidget):
         self.speak_button.clicked.connect(self.send_text_to_eleven_labs)
         self.stop_button.clicked.connect(self.stop_playback)
         self.resume_button.clicked.connect(self.resume_playback)
+        self.voice_dropdown.currentIndexChanged.connect(self.on_voice_selected)
+
+        self.load_voices() # Load voices when the window initializes
+
+    def keyPressEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Escape:
+            self.close()
+        else:
+            super().keyPressEvent(event)
 
     @QtCore.pyqtSlot(str)
     def set_status(self, text):
         self.status_label.setText(text)
         self.status_label.verticalScrollBar().setValue(self.status_label.verticalScrollBar().minimum()) # Scroll to top
+
+    def load_voices(self):
+        if not ELEVENLABS_API_KEY:
+            self.set_status("Eleven Labs API Key nicht gefunden. Stimmen können nicht geladen werden.")
+            return
+
+        self.set_status("Lade Eleven Labs Stimmen...")
+        threading.Thread(target=self._fetch_voices).start()
+
+    def _fetch_voices(self):
+        url = "https://api.elevenlabs.io/v1/voices"
+        headers = {
+            "Accept": "application/json",
+            "xi-api-key": ELEVENLABS_API_KEY
+        }
+        try:
+            response = requests.get(url, headers=headers)
+            response.raise_for_status()
+            voices_data = response.json()
+            print(f"Fetched voices data: {voices_data}") # Debug print
+            
+            # Use QMetaObject.invokeMethod to update UI from the worker thread
+            QtCore.QMetaObject.invokeMethod(self, "update_voice_dropdown",
+                                            QtCore.Qt.QueuedConnection,
+                                            QtCore.Q_ARG(dict, voices_data))
+        except requests.exceptions.RequestException as e:
+            QtCore.QMetaObject.invokeMethod(self, "set_status",
+                                            QtCore.Qt.QueuedConnection,
+                                            QtCore.Q_ARG(str, f"Fehler beim Laden der Stimmen: {e}"))
+        except Exception as e:
+            QtCore.QMetaObject.invokeMethod(self, "set_status",
+                                            QtCore.Qt.QueuedConnection,
+                                            QtCore.Q_ARG(str, f"Ein unerwarteter Fehler beim Laden der Stimmen ist aufgetreten: {e}"))
+
+    @QtCore.pyqtSlot(dict)
+    def update_voice_dropdown(self, voices_data):
+        global ELEVENLABS_VOICE_ID # Declare global here as it might be modified
+        self.voice_dropdown.clear()
+        self.voices = {}
+        # Use the global ELEVENLABS_VOICE_ID which is now loaded from settings/env
+        current_voice_id = ELEVENLABS_VOICE_ID 
+        
+        # Temporarily block signals to prevent on_voice_selected from firing during population
+        self.voice_dropdown.blockSignals(True)
+
+        for voice in voices_data.get("voices", []):
+            name = voice.get("name")
+            voice_id = voice.get("voice_id")
+            if name and voice_id:
+                print(f"Adding voice: {name} (ID: {voice_id})") # Debug print
+                display_text = f"{name} (ID: {voice_id})"
+                self.voice_dropdown.addItem(display_text, voice_id)
+                self.voices[voice_id] = name # Store for easy lookup
+
+        # Set the current voice after all items are added
+        index = self.voice_dropdown.findData(current_voice_id)
+        if index != -1:
+            self.voice_dropdown.setCurrentIndex(index)
+        else:
+            # If the current voice ID is not found, default to the first one if available
+            if self.voice_dropdown.count() > 0:
+                self.voice_dropdown.setCurrentIndex(0)
+                ELEVENLABS_VOICE_ID = self.voice_dropdown.currentData()
+                settings.set_setting("elevenlabs_voice_id", ELEVENLABS_VOICE_ID)
+
+        self.voice_dropdown.blockSignals(False) # Re-enable signals
+        
+        self.set_status("Stimmen geladen.")
+
+    def on_voice_selected(self):
+        selected_voice_id = self.voice_dropdown.currentData()
+        if selected_voice_id:
+            global ELEVENLABS_VOICE_ID
+            ELEVENLABS_VOICE_ID = selected_voice_id
+            settings.set_setting("elevenlabs_voice_id", ELEVENLABS_VOICE_ID) # Save to settings
+            selected_voice_name = self.voices.get(selected_voice_id, "Unbekannt")
+            self.set_status(f"Stimme ausgewählt: {selected_voice_name} (ID: {selected_voice_id})")
 
     def send_text_to_eleven_labs(self):
         text = self.text_input.toPlainText().strip()
